@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 interface User {
   name: string;
@@ -8,21 +8,19 @@ interface User {
 
 export function HomePage() {
   const [users, setUsers] = useState<User[]>();
-  async function loadData() {
-    const response = await fetch("https://api.github.com/users/antonysantos71");
-    const data = await response.json();
-    setUsers(data);
-  }
-  loadData();
+// useMemo é usado para memorizar um valor, evitando que ele seja recalculado em cada renderização
+  const names = useMemo(
+    () => users?.map((user) => user.name).join(", "),
+    [users]
+  );
+  // useCallback é usado para memorizar uma função, evitando que ela seja recriada em cada renderização
+  const greeting = useCallback((user: User) => {
+    alert(`Hello ${user.name}`);
+  }, [])
 
   return (
     <div>
       <h1>home</h1>
-      <div>
-        {users?.map((user) => (
-          <div>{user.name}</div>
-        ))}
-      </div>
     </div>
   );
 }
